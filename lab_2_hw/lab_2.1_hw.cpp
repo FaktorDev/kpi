@@ -94,13 +94,13 @@ void dict_variant()
 
     vector <pair<string, double>> vec(dict.begin(), dict.end());
 
-    std::sort(vec.begin(), vec.end(),
+    sort(vec.begin(), vec.end(),
         [](const auto& a, const auto& b) {
             return a.second < b.second;
         });
 
     for (auto& [key, value] : vec) {
-        std::cout << key << " => " << value << std::endl;
+        cout << key << " => " << value << endl;
     }
     char pause;
     cin >> pause;
@@ -129,4 +129,3 @@ int main()
         }
     }
 }
-
