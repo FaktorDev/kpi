@@ -18,7 +18,7 @@ int main()
 	system("cls");
 
 	cout << "\t";
-	for (double i = a; i < b; i += step)
+	for (double i = a; i <= b; i += step)
 	{
 		cout << i << "|" << "\t";
 	}
@@ -29,9 +29,9 @@ int main()
 	}
 	cout << "\n";
 
-	for (double i = a; i < b; i += step)
+	for (double i = a; i <= b; i += step)
 	{
-		for(double j = a; j < b; j += step)
+		for(double j = a; j <= b; j += step)
 		{
 			if (j == a)
 			{ 
