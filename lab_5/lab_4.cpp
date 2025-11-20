@@ -1,4 +1,10 @@
 #include <iostream>
+#include <chrono>
+#include <random>
+#include <vector>
+#include <iomanip>
+
+using namespace std;
 
 struct Point
 {
@@ -31,20 +37,20 @@ struct DoubleConnectedList
         Node* current = head;
         while (current)
         {
-            std::cout << "x: " << current->data.x << " y: " << current->data.y << std::endl;
+            cout << "x: " << current->data.x << " y: " << current->data.y << endl;
             current = current->next;
         }
-        std::cout << std::endl;
+        cout << endl;
     }
     void displayBackward()
     {
         Node* current = tail;
         while (current)
         {
-            std::cout << "x: " << current->data.x << " y: " << current->data.y << std::endl;
+            cout << "x: " << current->data.x << " y: " << current->data.y << endl;
             current = current->prev;
         }
-        std::cout << std::endl;
+        cout << endl;
     }
     void deleteFirst()
     {
@@ -85,7 +91,7 @@ struct DoubleConnectedList
                 double sum2 = current->next->data.x * current->next->data.x + current->next->data.y * current->next->data.y;
                 if (sum1 < sum2)
                 {
-                    std::swap(current->data, current->next->data);
+                    swap(current->data, current->next->data);
                     swapped = true;
                 }
                 current = current->next;
@@ -94,9 +100,106 @@ struct DoubleConnectedList
 	}
 };
 
+void test_sorting()
+{
+    std::cout << "Enter number of test cases: ";
+    int testCount;
+    std::cin >> testCount;
+
+    struct TestCase { int n; int iterations; };
+    std::vector<TestCase> cases;
+
+    for (int i = 0; i < testCount; i++)
+    {
+        TestCase tc;
+        std::cout << "\nTest case " << (i + 1) << "\n";
+        std::cout << "Enter number of elements: ";
+        std::cin >> tc.n;
+        std::cout << "Enter number of iterations: ";
+        std::cin >> tc.iterations;
+
+        cases.push_back(tc);
+    }
+
+    std::cout << "\nStarting performance tests...\n\n";
+
+    // зелений колір
+    const char* green = "\033[32m";
+    const char* reset = "\033[0m";
+
+    struct Result { int n; int iterations; double ms; };
+    std::vector<Result> results;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dist(-1000.0, 1000.0);
+
+    int totalSteps = 0;
+    for (auto& c : cases)
+        totalSteps += c.iterations;
+
+    int completed = 0;
+
+    for (auto& tc : cases)
+    {
+        double totalTime = 0;
+
+        for (int it = 0; it < tc.iterations; it++)
+        {
+            DoubleConnectedList list;
+            for (int i = 0; i < tc.n; i++)
+            {
+                Point p{ dist(gen), dist(gen) };
+                list.append(p);
+            }
+
+            auto start = std::chrono::high_resolution_clock::now();
+            list.sortByDecreaseSumOfSquares();
+            auto end = std::chrono::high_resolution_clock::now();
+
+            double elapsedMs =
+                std::chrono::duration<double, std::milli>(end - start).count();
+
+            totalTime += elapsedMs;
+            list.deleteAll();
+
+            completed++;
+            double percent = (completed * 100.0) / totalSteps;
+
+            std::cout << green << "Progress: "
+                << std::fixed << std::setprecision(1)
+                << percent << "%\r" << reset;
+
+            std::cout.flush();
+        }
+
+        double avgMs = totalTime / tc.iterations;
+        results.push_back({ tc.n, tc.iterations, avgMs });
+    }
+
+    std::cout << "\n\n===========================================\n";
+    std::cout << " Performance Results\n";
+    std::cout << "===========================================\n";
+
+    std::cout << std::left
+        << std::setw(15) << "Elements"
+        << std::setw(15) << "Iterations"
+        << std::setw(15) << "Avg Time (ms)"
+        << "\n";
+
+    for (auto& r : results)
+    {
+        std::cout << std::left
+            << std::setw(15) << r.n
+            << std::setw(15) << r.iterations
+            << std::setw(15) << r.ms
+            << "\n";
+    }
+}
+
 int main()
 {
-    std::cout << "TEST 1: Empty list" << std::endl;
+    cout << "TEST 1: Empty list" << endl;
     {
         DoubleConnectedList list;
 
@@ -107,7 +210,7 @@ int main()
         list.sortByDecreaseSumOfSquares();
     }
 
-    std::cout << "\nTEST 2: Append one element" << std::endl;
+    cout << "\nTEST 2: Append one element" << endl;
     {
         DoubleConnectedList list;
         list.append({ 1, 2 });
@@ -116,7 +219,7 @@ int main()
         list.displayBackward();
     }
 
-    std::cout << "\nTEST 3: Append several elements" << std::endl;
+    cout << "\nTEST 3: Append several elements" << endl;
     {
         DoubleConnectedList list;
         list.append({ 1, 1 });
@@ -127,7 +230,7 @@ int main()
         list.displayBackward();
     }
 
-    std::cout << "\nTEST 4: Delete first element (several nodes)" << std::endl;
+    cout << "\nTEST 4: Delete first element (several nodes)" << endl;
     {
         DoubleConnectedList list;
         list.append({ 5, 5 });
@@ -138,7 +241,7 @@ int main()
         list.displayForward();
     }
 
-    std::cout << "\nTEST 5: Delete first element (one node)" << std::endl;
+    cout << "\nTEST 5: Delete first element (one node)" << endl;
     {
         DoubleConnectedList list;
         list.append({ 10, 10 });
@@ -149,7 +252,7 @@ int main()
         list.displayBackward();
     }
 
-    std::cout << "\nTEST 6: Delete all elements" << std::endl;
+    cout << "\nTEST 6: Delete all elements" << endl;
     {
         DoubleConnectedList list;
         list.append({ 1, 2 });
@@ -162,7 +265,7 @@ int main()
         list.displayBackward();
     }
 
-    std::cout << "\nTEST 7: Sorting simple case" << std::endl;
+    cout << "\nTEST 7: Sorting simple case" << endl;
     {
         DoubleConnectedList list;
 
@@ -174,7 +277,7 @@ int main()
         list.displayForward();
     }
 
-    std::cout << "\nTEST 8: Sorting identical elements" << std::endl;
+    cout << "\nTEST 8: Sorting identical elements" << endl;
     {
         DoubleConnectedList list;
 
@@ -186,7 +289,7 @@ int main()
         list.displayForward();
     }
 
-    std::cout << "\nTEST 9: Sorting one element" << std::endl;
+    cout << "\nTEST 9: Sorting one element" << endl;
     {
         DoubleConnectedList list;
         list.append({ 7, 7 });
@@ -195,7 +298,7 @@ int main()
         list.displayForward();
     }
 
-    std::cout << "\nTEST 10: Mixed operations" << std::endl;
+    cout << "\nTEST 10: Mixed operations" << endl;
     {
         DoubleConnectedList list;
 
@@ -214,6 +317,8 @@ int main()
         list.deleteAll();
         list.displayForward();
     }
+
+    test_sorting();
 
     return 0;
 }
