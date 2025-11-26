@@ -7,7 +7,7 @@
 using namespace std;
 
 struct Stats {
-    long long copies = 0; // porivnyannya
+    long long copies = 0;
     long long porivnyannya = 0;
 };
 
@@ -59,7 +59,7 @@ void countingSortByDigit(vector<int>& a, int exp, Stats& s)
     vector<int> output(n);
     vector<int> count(10, 0);
     countingSortByDigit;
-    // Підрахунок
+    // Pidrahunok
     for (int i = 0; i < n; i++)
     {
         int digit = (a[i] / exp) % 10;
@@ -67,11 +67,11 @@ void countingSortByDigit(vector<int>& a, int exp, Stats& s)
         s.copies++;
     }
 
-    // Префіксні суми
+    // Prefixni sumy
     for (int i = 1; i < 10; i++)
         count[i] += count[i - 1];
 
-    // Побудова вихідного масиву (порядок стабільності)
+    // Pobydova vihidnogo masivu
     for (int i = n - 1; i >= 0; i--)
     {
         int digit = (a[i] / exp) % 10;
@@ -80,7 +80,7 @@ void countingSortByDigit(vector<int>& a, int exp, Stats& s)
         s.copies++;
     }
 
-    // Копіювання назад
+    // Copiuvana nazad
     for (int i = 0; i < n; i++)
     {
         a[i] = output[i];
